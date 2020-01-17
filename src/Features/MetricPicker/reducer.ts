@@ -21,9 +21,8 @@ const slice = createSlice({
     metricsReceived: (state, action) => {
       console.log(state.metrics, 'this is state from metrics recieved')
       console.log(action, 'this is the action payload')
-      const { data } = action.payload;
-      state.metrics = data;
-      console.log(state.metrics, "this should be updated array")
+      state.metrics = action.payload;
+      console.log(state.metrics, "this should be updated")
     },
     metricsErrorRecieved: (state, action: PayloadAction<ApiErrorAction>) => state,
   },

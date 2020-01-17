@@ -4,6 +4,8 @@ import { actions } from './reducer';
 import { Provider, createClient, useQuery } from 'urql';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Chip from '../../components/Chip';
+import Paper from '@material-ui/core/Paper';
+
 import { IState } from '../../store';
 
 const client = createClient({
@@ -19,7 +21,7 @@ const client = createClient({
   const getMetrics = (state: IState) => {
     console.log(state.metrics, 'this is state.metrics')
     const { metrics } = state.metrics;
-    console.log(metrics)
+    console.log(metrics, 'this is from getMetrics')
     return {
      metrics
     };
@@ -61,5 +63,13 @@ const client = createClient({
   
     if (fetching) return <LinearProgress />;
   
-    return <Chip label={''} />;
+    return <Paper>
+      TEST
+      {metrics.map((singleMetric) => {
+        return (
+          <Chip key={singleMetric} label={singleMetric} />
+        )
+      })}
+        {console.log(metrics, "in return test")}
+    </Paper> 
   };
