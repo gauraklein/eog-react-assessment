@@ -31,7 +31,7 @@ const App = () => (
     <CssBaseline />
     <Provider store={store}>
       <Wrapper>
-        {/* <Header /> */}
+        <Header />
         <MetricPicker />
         <Metrics />
         <NowWhat />

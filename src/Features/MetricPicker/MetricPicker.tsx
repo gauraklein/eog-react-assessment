@@ -67,7 +67,9 @@ const client = createClient({
       TEST
       {metrics.map((singleMetric) => {
         return (
-          <Chip key={singleMetric} label={singleMetric} />
+          <Chip key={singleMetric} label={singleMetric} onClick={() => {
+            console.log(singleMetric, "clicked")
+          }} />
         )
       })}
         {console.log(metrics, "in return test")}
