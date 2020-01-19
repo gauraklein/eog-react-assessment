@@ -5,10 +5,31 @@ export type ApiErrorAction = {
   error: string;
 };
 
+type selectedMetricsType = Array<string>
+
+type metricMeasurementDataType = {
+  metric: string,
+  at: number,
+  value: number,
+  unit: string
+
+}
+
+// TODO figure out how to set type for selected Metrics 
+
 const initialState = {
   metrics: [],
-  selectedMetrics: ["waterTemp"]
+  selectedMetrics: ["waterTemp"],
+  metricMeasurementData: [
+    {
+      metric: "test",
+      at: 0,
+      value: 0,
+      unit: "u"
+    }
+  ]
 };
+
 
 
 const slice = createSlice({
@@ -40,7 +61,21 @@ const slice = createSlice({
       
       state.selectedMetrics = newSelectedMetrics
 
+    },
+
+    displayCurrentMetricData: (state, action) => {
+      console.log(action.payload)
+
+      const newMeasurementData = [
+        ...state.metricMeasurementData,
+       
+      ]
+
+      newMeasurementData.push(action.payload)
+
+      state.metricMeasurementData = newMeasurementData
     }
+
   },
 });
 
