@@ -1,5 +1,5 @@
 import React from 'react';
-import MetricPicker from '../Features/MetricPicker/MetricPicker';
+import MetricPicker from '../Features/Metrics/MetricPicker';
 
 
 export default () => (
