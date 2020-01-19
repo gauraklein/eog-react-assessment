@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from './reducer';
-import { Provider, createClient, useQuery } from 'urql';
+import { Provider, createClient, useQuery, defaultExchanges, subscriptionExchange } from 'urql';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Chip from '../../components/Chip';
 import Paper from '@material-ui/core/Paper';
+import { SubscriptionClient} from 'subscriptions-transport-ws'
 
 import { IState } from '../../store';
 
@@ -13,9 +14,25 @@ import { IState } from '../../store';
 // Types for state object
 //Making value Refresh
 
+// const subscriptionClient = new SubscriptionClient('ws://react.eogresources.com/graphql', { })
+
 const client = createClient({
     url: 'https://react.eogresources.com/graphql',
+    // exchanges: [
+    //   ...defaultExchanges,
+    //   subscriptionExchange({
+    //     forwardSubscription: operation => {
+    //       subscriptionClient.request(operation)
+    //     }
+    //   })
+    // ]
   });
+  
+  const heartbeatQuery = `
+    query {
+      heartBeat
+    }
+  `
 
   const query = `
   query($metricName: String! ) {
@@ -61,11 +78,13 @@ const client = createClient({
       query,
       variables: {
           metricName
-      }
+      }, 
+      pollInterval: 1300, 
+      requestPolicy: 'cache-and-network',
     });
     // console.log(result, 'this is the result')
     const { fetching, data, error } = result;
-
+ 
     useEffect(() => {
 
       if (error) {
@@ -88,11 +107,13 @@ const client = createClient({
     const renderCurrentValue = (metricValueData) => {
 
         return (
-            <Paper>
+            <Paper key={metricValueData.metric}>
                 <div>
                     {metricValueData.metric}
                     <br/>
                     {metricValueData.value + " " + metricValueData.unit}
+                    <br/>
+                    {metricValueData.at}
                 </div>
             </Paper>
         )

@@ -74,6 +74,18 @@ const slice = createSlice({
       newMeasurementData.push(action.payload)
 
       state.metricMeasurementData = newMeasurementData
+    },
+
+    updateCurrentMetricData: (state, action) => {
+
+      console.log(action.payload)
+      const updatedMeasurementData = [
+        ...state.metricMeasurementData
+      ]
+
+      return state
+
+
     }
 
   },
