@@ -8,6 +8,11 @@ import Paper from '@material-ui/core/Paper';
 
 import { IState } from '../../store';
 
+// TODO
+// Multiple Measurements
+// Types for state object
+//Making value Refresh
+
 const client = createClient({
     url: 'https://react.eogresources.com/graphql',
   });
@@ -40,6 +45,8 @@ const client = createClient({
       </Provider>
     );
   };
+
+  
 
   const CurrentMetricData = () => {
 
@@ -83,8 +90,8 @@ const client = createClient({
         return (
             <Paper>
                 <div>
-                    test
                     {metricValueData.metric}
+                    <br/>
                     {metricValueData.value + " " + metricValueData.unit}
                 </div>
             </Paper>
