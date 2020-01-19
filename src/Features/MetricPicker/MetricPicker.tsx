@@ -19,9 +19,10 @@ const client = createClient({
   `;
   
   const getMetrics = (state: IState) => {
-    console.log(state.metrics, 'this is state.metrics')
+
+    // console.log(state.metrics, 'this is state.metrics')
     const { metrics } = state.metrics;
-    console.log(metrics, 'this is from getMetrics')
+    // console.log(metrics, 'this is from getMetrics')
     return {
      metrics
     };
@@ -34,30 +35,41 @@ const client = createClient({
       </Provider>
     );
   };
+
+ 
   
   const MetricPicker = () => {
-    console.log('metric picker component')
+    // console.log('metric picker component')
+
+    const handleMetricClick = (singleMetric: any) => {
+      console.log(singleMetric)
+      dispatch(actions.metricClicked(singleMetric))
+      return
+    }
+
     const dispatch = useDispatch();
 
     const { metrics } = useSelector(getMetrics);
-    console.log(metrics, 'this is from use selector')
+    // console.log(metrics, 'this is from use selector')
     const [result] = useQuery({
       query
     });
-    console.log(result, 'this is the result')
+    // console.log(result, 'this is the result')
     const { fetching, data, error } = result;
 
     useEffect(() => {
+
       if (error) {
         dispatch(actions.metricsErrorRecieved({ error: error.message }));
         return;
       }
+
       if (!data) return;
+
       const { getMetrics } = data;
-      console.log(getMetrics, "This is metricsData")
-      // if(data) {
-      //   console.log('there is data')
-      // }
+
+      // console.log(getMetrics, "This is metricsData")
+    
       dispatch(actions.metricsReceived(getMetrics));
     }, [dispatch, data, error]);
   
@@ -68,10 +80,12 @@ const client = createClient({
       {metrics.map((singleMetric) => {
         return (
           <Chip key={singleMetric} label={singleMetric} onClick={() => {
-            console.log(singleMetric, "clicked")
+            handleMetricClick(singleMetric)
           }} />
         )
       })}
-        {console.log(metrics, "in return test")}
+        {/* {console.log(metrics, "in return test")} */}
     </Paper> 
   };
+
+ 
