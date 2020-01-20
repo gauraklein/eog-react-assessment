@@ -123,23 +123,23 @@ export default () => {
   // if everything goes correctly the value gets returned
 
   if (historicMetricData.length > 0) {
-    let MetricName = historicMetricData[0].measurements[0].value
+    // let MetricName = historicMetricData[0].measurements[0].value
   return (
     <div>
       <h1>hello world</h1>
-  <p>{MetricName}</p>
+  <p>{}</p>
   {/* <ResponsiveContainer width={700} height="80%"> */}
-  {/* <LineChart width={600} height={400} data={historicMetricData.waterTemp.measurements}>
-    <Line type="monotone" dataKey="value" name="waterTemp" dot={false} stroke="#8884d8" />
+  <LineChart width={600} height={400} data={historicMetricData}>
+    <Line type="monotone" dataKey="waterTempValue" name="waterTemp" dot={false} stroke="#8884d8" />
     <CartesianGrid stroke="#ccc" />
-    <XAxis dataKey="at">
+    <XAxis dataKey="timestamp">
     <Label value="Timestamp" offset={0} position="insideBottom" />
     </XAxis>
     <YAxis label={{ value: 'F', angle: 90, position: 'insideTopLeft' }}/>
-    {/* <YAxis label={{ value: 'slk', angle: 90, position: 'insideTopLeft' }}/> */}
-    {/* < Tooltip />
+
+    < Tooltip />
     <Legend verticalAlign="top" height={36}/>
-  </LineChart> */}
+  </LineChart> }
   {/* </ResponsiveContainer> */}
     </div>
   );
