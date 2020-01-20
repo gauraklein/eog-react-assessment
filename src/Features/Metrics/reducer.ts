@@ -1,111 +1,88 @@
 import { createSlice, PayloadAction } from 'redux-starter-kit';
 
-
+//I'm not very familiar with typescript, give
 export type ApiErrorAction = {
   error: string;
 };
 
-type selectedMetricsType = Array<string>
-
-type metricMeasurementDataType = {
-  metric: string,
-  at: number,
-  value: number,
-  unit: string
-
-}
-
-// TODO figure out how to set type for selected Metrics 
+// TODO figure out how to set type for selected Metrics
 
 const initialState = {
   metrics: [],
-  selectedMetrics: ["waterTemp"],
+  selectedMetrics: ['waterTemp'],
+  //Since there were only six metrics I went ahead and wrote them out in initial state
+  // I definitely would need to write a better solution if this project was to scale up at all
   metricMeasurementData: {
-    waterTemp : {
+    waterTemp: {
       at: 0,
       value: 0,
-      unit: "u"
+      unit: 'u',
     },
     casingPressure: {
       at: 0,
       value: 0,
-      unit: "u"
+      unit: 'u',
     },
     injValveOpen: {
       at: 0,
       value: 0,
-      unit: "u"
+      unit: 'u',
     },
     flareTemp: {
       at: 0,
       value: 0,
-      unit: "u"
+      unit: 'u',
     },
     oilTemp: {
       at: 0,
       value: 0,
-      unit: "u"
+      unit: 'u',
     },
     tubingPressure: {
       at: 0,
       value: 0,
-      unit: "u"
+      unit: 'u',
     },
-
-  }
+  },
 };
-
-
 
 const slice = createSlice({
   name: 'metrics',
   initialState,
   reducers: {
+    //adds metrics from db query to redux store
     metricsReceived: (state, action) => {
-      // console.log(state.metrics, 'this is state from metrics recieved')
-      // console.log(action, 'this is the action payload')
       state.metrics = action.payload;
-      // console.log(state.metrics, "this should be updated")
     },
-
+    //error handling
     metricsErrorRecieved: (state, action: PayloadAction<ApiErrorAction>) => state,
-
+    //adds a clicked metric to selected metrics array
     metricClicked: (state, action) => {
-      console.log(state, 'this is the state from metric clicked')
-      console.log(action.payload, 'this is the action payload')
-
+      //ensures there are no duplicates
       if (state.selectedMetrics.includes(action.payload)) {
-        return
+        return;
       }
 
-      const newSelectedMetrics= [
-        ...state.selectedMetrics
-      ]
+      const newSelectedMetrics = [...state.selectedMetrics];
 
-      newSelectedMetrics.push(action.payload)
-      
-      state.selectedMetrics = newSelectedMetrics
+      newSelectedMetrics.push(action.payload);
 
+      state.selectedMetrics = newSelectedMetrics;
     },
-
+    //displays current values
     displayCurrentMetricData: (state, action) => {
-      console.log(action.payload, 'this is the action.payload')
-      const metricName = action.payload.metric
-
+      //for readability
+      const metricName = action.payload.metric;
+      //just updates the values in corrosponding object
       const newMeasurementData = {
         ...state.metricMeasurementData[metricName],
         at: action.payload.at,
         value: action.payload.value,
-        unit: action.payload.unit
-      }
-      
-      console.log(newMeasurementData, 'this is the new Measurement data')
+        unit: action.payload.unit,
+      };
 
-      // newMeasurementData.push(action.payload)
-
-      state.metricMeasurementData[metricName] = newMeasurementData
-    }
-
+      state.metricMeasurementData[metricName] = newMeasurementData;
+    },
   },
 });
 

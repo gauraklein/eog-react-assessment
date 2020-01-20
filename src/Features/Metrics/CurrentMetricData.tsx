@@ -1,37 +1,18 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from './reducer';
-import { Provider, createClient, useQuery} from 'urql';
+import { Provider, createClient, useQuery } from 'urql';
 import LinearProgress from '@material-ui/core/LinearProgress';
-// import Chip from '../../components/Chip';
 import Paper from '@material-ui/core/Paper';
-
-
 import { IState } from '../../store';
-
-// TODO
-// Multiple Measurements
-// Types for state object
-//Making value Refresh DONE
-//updating values in object as opposed to adding new one
-
 
 //For Graphql
 const client = createClient({
-    url: 'https://react.eogresources.com/graphql',
-    
-  });
-  
-  //Gives Current Timestamp
-  const heartbeatQuery = `
-    query {
-      heartBeat
-    }
-  `
+  url: 'https://react.eogresources.com/graphql',
+});
 
-  //gives a metric object with current values
-
-  const query = `
+//gives a metric object with current values
+const query = `
   query($metricName: String! ) {
     getLastKnownMeasurement(metricName: $metricName) {
       metric
@@ -42,111 +23,91 @@ const client = createClient({
   }
   `;
 
-  //pulls from redux store
-  const getSelectedMetrics = (state: IState) => {
-
-    
-    const { selectedMetrics, metricMeasurementData  } = state.metrics;
-   
-    return {
-     selectedMetrics,
-     metricMeasurementData
-    };
+//pulls from redux store
+const getSelectedMetrics = (state: IState) => {
+  const { selectedMetrics, metricMeasurementData } = state.metrics;
+  return {
+    selectedMetrics,
+    metricMeasurementData,
   };
-  
-  //Componenent Export
-  export default () => {
-    return (
-      <Provider value={client}>
-        <RenderSelectedMetrics />
-        {/* <CurrentMetricData /> */}
-      </Provider>
-    );
-  };
-    //renders
-    const RenderSelectedMetrics = () => {
-      const { selectedMetrics} = useSelector(getSelectedMetrics);
-      console.log(selectedMetrics, 'these are the selected metrics')
-      return (
-        <div>
-        {selectedMetrics.map((singleMetric) => {
-          return (
-            <Paper key={singleMetric}>
-              <h1>{singleMetric}</h1>
-                <CurrentMetricData metricNameObject={singleMetric}/>
-            </Paper>
-          )
-        })}
-        </div>
-      )
-    }
-    
-  
-  //PRINT AN ARRAY THEN MAP TO GET LAST KNOWN MEASUREMENT FOR EACH SELECTED METRIC
+};
 
-  //returns a paper component with metric information
-  const CurrentMetricData = (metricNameObject) => {
-    const metricName = metricNameObject.metricNameObject
-    console.log(metricNameObject, 'this si teh metric name')
-    //Redux
-    const dispatch = useDispatch();
-    //makes selected metrics and measurements available in component
-    const {metricMeasurementData } = useSelector(getSelectedMetrics);
-    
-    //this should go into the map function
-    // const metricName = selectedMetrics[0]
-    const [result] = useQuery({
-      query,
-      variables: {
-          metricName
-      }, 
-      pollInterval: 1300, 
-      requestPolicy: 'cache-and-network',
-    });
-    // result of graphql query
-    const { fetching, data, error } = result;
-    //does something based on graphql query
-    useEffect(() => {
+//Componenent Export
+export default () => {
+  return (
+    <Provider value={client}>
+      <RenderSelectedMetrics />
+    </Provider>
+  );
+};
 
-      if (error) {
-        dispatch(actions.metricsErrorRecieved({ error: error.message }));
-        return;
-      }
-      
-      if (!data) return;
-
-      const { getLastKnownMeasurement } = data;
-
-    
-      dispatch(actions.displayCurrentMetricData(getLastKnownMeasurement));
-    }, [dispatch, data, error]);
-    
-
-    if (fetching) return <LinearProgress />;
-
-    const renderCurrentValue = (metricValueData) => {
-
+//renders metrics and values -- Parent Component
+const RenderSelectedMetrics = () => {
+  //grabs user chosen Metrics
+  const { selectedMetrics } = useSelector(getSelectedMetrics);
+  //Takes each metric and renders it onto a Paper Component
+  return (
+    <div>
+      {selectedMetrics.map(singleMetric => {
         return (
-           
-                <div>
-                    {metricValueData.metric}
-                    <br/>
-                    {metricValueData.value + " " + metricValueData.unit}
-                    <br/>
-                    {metricValueData.at}
-                </div>
-        )
-    
-      }
+          <Paper key={singleMetric}>
+            <h2>{singleMetric}</h2>
+            {/* renders current data based on graphql query */}
+            <CurrentMetricData metricNameObject={singleMetric} />
+          </Paper>
+        );
+      })}
+    </div>
+  );
+};
 
-    console.log(metricMeasurementData, 'this is the metricMeasurementData')
-    return (
-        <div>
-            <h2>
-              {metricMeasurementData[metricName].value + " " + metricMeasurementData[metricName].unit} 
-            </h2>
-        </div>     
+//queries the backend then renders current value
+const CurrentMetricData = metricNameObject => {
+  //a quick work around for metricNameObject being passed down as an object as opposed to a string
+  const metricName = metricNameObject.metricNameObject;
+  //Redux
+  const dispatch = useDispatch();
+  //makes selected metrics and measurements available in component
+  const { metricMeasurementData } = useSelector(getSelectedMetrics);
+  //db query: polling at the moment but given more time I would dig into subscribing
+  const [result] = useQuery({
+    query,
+    variables: {
+      metricName,
+    },
+    pollInterval: 1300,
+    requestPolicy: 'cache-and-network',
+  });
 
-    )
-  };
+  // status of graphql query -- this is my first time working with graphql and being able to destructure
+  // the result like this is awesome!
+  const { fetching, data, error } = result;
+  //Hook
+  useEffect(() => {
+    if (error) {
+      dispatch(actions.metricsErrorRecieved({ error: error.message }));
+      return;
+    }
 
+    if (!data) return;
+
+    // I decided to go with getLastKnownMeasurement for this Query
+    // In retrospect this seems pretty inefficient If I was able to refactor
+    // I would probably use getMultipleMeasurements and use that result for current
+    // and historical values
+
+    const { getLastKnownMeasurement } = data;
+
+    //the dispatch
+    dispatch(actions.displayCurrentMetricData(getLastKnownMeasurement));
+  }, [dispatch, data, error]);
+
+  if (fetching) return <LinearProgress />;
+
+  // if everything goes correctly the value gets returned
+  return (
+    <div>
+      <h1>{metricMeasurementData[metricName].value + ' ' + metricMeasurementData[metricName].unit}</h1>
+    </div>
+  );
+};
