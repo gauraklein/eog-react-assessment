@@ -1,38 +1,35 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from './reducer';
-import { Provider, createClient, useQuery, defaultExchanges, subscriptionExchange } from 'urql';
+import { Provider, createClient, useQuery} from 'urql';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import Chip from '../../components/Chip';
+// import Chip from '../../components/Chip';
 import Paper from '@material-ui/core/Paper';
-import { SubscriptionClient} from 'subscriptions-transport-ws'
+
 
 import { IState } from '../../store';
 
 // TODO
 // Multiple Measurements
 // Types for state object
-//Making value Refresh
+//Making value Refresh DONE
+//updating values in object as opposed to adding new one
 
-// const subscriptionClient = new SubscriptionClient('ws://react.eogresources.com/graphql', { })
 
+//For Graphql
 const client = createClient({
     url: 'https://react.eogresources.com/graphql',
-    // exchanges: [
-    //   ...defaultExchanges,
-    //   subscriptionExchange({
-    //     forwardSubscription: operation => {
-    //       subscriptionClient.request(operation)
-    //     }
-    //   })
-    // ]
+    
   });
   
+  //Gives Current Timestamp
   const heartbeatQuery = `
     query {
       heartBeat
     }
   `
+
+  //gives a metric object with current values
 
   const query = `
   query($metricName: String! ) {
@@ -45,8 +42,10 @@ const client = createClient({
   }
   `;
 
+  //pulls from redux store
   const getSelectedMetrics = (state: IState) => {
 
+    
     const { selectedMetrics, metricMeasurementData  } = state.metrics;
    
     return {
@@ -55,6 +54,7 @@ const client = createClient({
     };
   };
   
+  //Componenent Export
   export default () => {
     return (
       <Provider value={client}>
@@ -64,25 +64,26 @@ const client = createClient({
   };
 
   
+  //PRINT AN ARRAY THEN MAP TO GET LAST KNOWN MEASUREMENT FOR EACH SELECTED METRIC
 
+  //returns a paper component with metric information
   const CurrentMetricData = () => {
-
+    //Redux
     const dispatch = useDispatch();
-
-    
+    //makes selected metrics and measurements available in component
     const { selectedMetrics, metricMeasurementData } = useSelector(getSelectedMetrics);
     
+    //this should go into the map function
     const metricName = selectedMetrics[0]
-    // console.log(metrics, 'this is from use selector')
     const [result] = useQuery({
       query,
       variables: {
           metricName
       }, 
-      pollInterval: 1300, 
+      // pollInterval: 1300, 
       requestPolicy: 'cache-and-network',
     });
-    // console.log(result, 'this is the result')
+    // result of graphql query
     const { fetching, data, error } = result;
  
     useEffect(() => {
