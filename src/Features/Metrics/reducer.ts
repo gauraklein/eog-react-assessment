@@ -20,14 +20,39 @@ type metricMeasurementDataType = {
 const initialState = {
   metrics: [],
   selectedMetrics: ["waterTemp"],
-  metricMeasurementData: [
-    {
-      metric: "test",
+  metricMeasurementData: {
+    waterTemp : {
       at: 0,
       value: 0,
       unit: "u"
-    }
-  ]
+    },
+    casingPressure: {
+      at: 0,
+      value: 0,
+      unit: "u"
+    },
+    injValveOpen: {
+      at: 0,
+      value: 0,
+      unit: "u"
+    },
+    flareTemp: {
+      at: 0,
+      value: 0,
+      unit: "u"
+    },
+    oilTemp: {
+      at: 0,
+      value: 0,
+      unit: "u"
+    },
+    tubingPressure: {
+      at: 0,
+      value: 0,
+      unit: "u"
+    },
+
+  }
 };
 
 
@@ -64,28 +89,21 @@ const slice = createSlice({
     },
 
     displayCurrentMetricData: (state, action) => {
-      console.log(action.payload)
+      console.log(action.payload, 'this is the action.payload')
+      const metricName = action.payload.metric
 
-      const newMeasurementData = [
-        ...state.metricMeasurementData,
-       
-      ]
+      const newMeasurementData = {
+        ...state.metricMeasurementData[metricName],
+        at: action.payload.at,
+        value: action.payload.value,
+        unit: action.payload.unit
+      }
+      
+      console.log(newMeasurementData, 'this is the new Measurement data')
 
-      newMeasurementData.push(action.payload)
+      // newMeasurementData.push(action.payload)
 
-      state.metricMeasurementData = newMeasurementData
-    },
-
-    updateCurrentMetricData: (state, action) => {
-
-      console.log(action.payload)
-      const updatedMeasurementData = [
-        ...state.metricMeasurementData
-      ]
-
-      return state
-
-
+      state.metricMeasurementData[metricName] = newMeasurementData
     }
 
   },

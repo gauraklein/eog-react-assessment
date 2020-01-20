@@ -58,46 +58,65 @@ const client = createClient({
   export default () => {
     return (
       <Provider value={client}>
-        <CurrentMetricData />
+        <RenderSelectedMetrics />
+        {/* <CurrentMetricData /> */}
       </Provider>
     );
   };
-
+    //renders
+    const RenderSelectedMetrics = () => {
+      const { selectedMetrics} = useSelector(getSelectedMetrics);
+      console.log(selectedMetrics, 'these are the selected metrics')
+      return (
+        <div>
+        {selectedMetrics.map((singleMetric) => {
+          return (
+            <Paper key={singleMetric}>
+              <h1>{singleMetric}</h1>
+                <CurrentMetricData metricNameObject={singleMetric}/>
+            </Paper>
+          )
+        })}
+        </div>
+      )
+    }
+    
   
   //PRINT AN ARRAY THEN MAP TO GET LAST KNOWN MEASUREMENT FOR EACH SELECTED METRIC
 
   //returns a paper component with metric information
-  const CurrentMetricData = () => {
+  const CurrentMetricData = (metricNameObject) => {
+    const metricName = metricNameObject.metricNameObject
+    console.log(metricNameObject, 'this si teh metric name')
     //Redux
     const dispatch = useDispatch();
     //makes selected metrics and measurements available in component
-    const { selectedMetrics, metricMeasurementData } = useSelector(getSelectedMetrics);
+    const {metricMeasurementData } = useSelector(getSelectedMetrics);
     
     //this should go into the map function
-    const metricName = selectedMetrics[0]
+    // const metricName = selectedMetrics[0]
     const [result] = useQuery({
       query,
       variables: {
           metricName
       }, 
-      // pollInterval: 1300, 
+      pollInterval: 1300, 
       requestPolicy: 'cache-and-network',
     });
     // result of graphql query
     const { fetching, data, error } = result;
- 
+    //does something based on graphql query
     useEffect(() => {
 
       if (error) {
         dispatch(actions.metricsErrorRecieved({ error: error.message }));
         return;
       }
-
+      
       if (!data) return;
 
       const { getLastKnownMeasurement } = data;
 
-   
     
       dispatch(actions.displayCurrentMetricData(getLastKnownMeasurement));
     }, [dispatch, data, error]);
@@ -108,7 +127,7 @@ const client = createClient({
     const renderCurrentValue = (metricValueData) => {
 
         return (
-            <Paper key={metricValueData.metric}>
+           
                 <div>
                     {metricValueData.metric}
                     <br/>
@@ -116,19 +135,16 @@ const client = createClient({
                     <br/>
                     {metricValueData.at}
                 </div>
-            </Paper>
         )
     
       }
 
-    console.log(metricMeasurementData)
+    console.log(metricMeasurementData, 'this is the metricMeasurementData')
     return (
         <div>
-            test
-            {metricMeasurementData.map((metricValueData) => {
-                return renderCurrentValue(metricValueData)
-                
-            })}
+            <h2>
+              {metricMeasurementData[metricName].value + " " + metricMeasurementData[metricName].unit} 
+            </h2>
         </div>     
 
     )
