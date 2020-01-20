@@ -16,7 +16,12 @@ const client = createClient({
     query {
         getMultipleMeasurements(
             input: [
-                { metricName: "waterTemp", after: 1579504940564, before: 1579506740564}
+                { metricName: "waterTemp", after: 1579504940564, before: 1579506740564},
+                { metricName: "casingPressure", after: 1579504940564, before: 1579506740564},
+                { metricName: "injValveOpen", after: 1579504940564, before: 1579506740564},
+                { metricName: "flareTemp", after: 1579504940564, before: 1579506740564},
+                { metricName: "oilTemp", after: 1579504940564, before: 1579506740564},
+                { metricName: "tubingPressure", after: 1579504940564, before: 1579506740564}
             ]
         ) {
           metric
