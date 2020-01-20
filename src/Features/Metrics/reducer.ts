@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from 'redux-starter-kit';
 
-//I'm not very familiar with typescript, give
 export type ApiErrorAction = {
   error: string;
 };

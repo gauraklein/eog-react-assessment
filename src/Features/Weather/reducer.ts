@@ -24,8 +24,6 @@ const slice = createSlice({
   initialState,
   reducers: {
     weatherDataRecevied: (state, action) => {
-      // console.log(state, 'this is state from weather reducer')
-      console.log(action, 'weather reducer triggered')
       const { description, locationName, temperatureinCelsius } = action.payload;
       state.temperatureinCelsius = temperatureinCelsius;
       state.temperatureinFahrenheit = toF(temperatureinCelsius);
