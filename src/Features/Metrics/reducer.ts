@@ -8,7 +8,7 @@ export type ApiErrorAction = {
 
 const initialState = {
   metrics: [],
-  selectedMetrics: ['waterTemp'],
+  selectedMetrics: ["waterTemp"],
   //Since there were only six metrics I went ahead and wrote them out in initial state
   // I definitely would need to write a better solution if this project was to scale up at all
   metricMeasurementData: {
