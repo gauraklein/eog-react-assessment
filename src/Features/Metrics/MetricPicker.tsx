@@ -5,87 +5,82 @@ import { Provider, createClient, useQuery } from 'urql';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Chip from '../../components/Chip';
 import Paper from '@material-ui/core/Paper';
-
 import { IState } from '../../store';
-
+// graphql
 const client = createClient({
-    url: 'https://react.eogresources.com/graphql',
-  });
-  
-  const query = `
+  url: 'https://react.eogresources.com/graphql',
+});
+//query to grab all metrics
+const query = `
   query {
     getMetrics 
   }
   `;
-  
-  const getMetrics = (state: IState) => {
-
-    // console.log(state.metrics, 'this is state.metrics')
-    const { metrics } = state.metrics;
-    // console.log(metrics, 'this is from getMetrics')
-    return {
-     metrics
-    };
+//pulls from redux store
+const getMetrics = (state: IState) => {
+  const { metrics } = state.metrics;
+  return {
+    metrics,
   };
-  
-  export default () => {
-    return (
-      <Provider value={client}>
-        <MetricPicker />
-      </Provider>
-    );
+};
+//exports Component
+export default () => {
+  return (
+    <Provider value={client}>
+      <MetricPicker />
+    </Provider>
+  );
+};
+
+//TODO
+//Turn this into a select
+//chip array that displays the metrics
+const MetricPicker = () => {
+  //adds a clicked metric to the selectedMetrics array in redux store
+  const handleMetricClick = (singleMetric: any) => {
+    dispatch(actions.metricClicked(singleMetric));
   };
-
- 
-  
-  const MetricPicker = () => {
-    // console.log('metric picker component')
-
-    const handleMetricClick = (singleMetric: any) => {
-      console.log(singleMetric)
-      dispatch(actions.metricClicked(singleMetric))
-      return
+  //Redux
+  const dispatch = useDispatch();
+  //grabs metrics for use in component
+  const { metrics } = useSelector(getMetrics);
+  //query result
+  const [result] = useQuery({
+    query,
+  });
+  // status of graphql query -- this is my first time working with graphql and being able to destructure
+  // the result like this is awesome!
+  const { fetching, data, error } = result;
+  //Hook
+  useEffect(() => {
+    if (error) {
+      dispatch(actions.metricsErrorRecieved({ error: error.message }));
+      return;
     }
 
-    const dispatch = useDispatch();
+    if (!data) return;
+    //from result
+    const { getMetrics } = data;
+    //dispatch
+    dispatch(actions.metricsReceived(getMetrics));
+  }, [dispatch, data, error]);
 
-    const { metrics } = useSelector(getMetrics);
-    // console.log(metrics, 'this is from use selector')
-    const [result] = useQuery({
-      query
-    });
-    // console.log(result, 'this is the result')
-    const { fetching, data, error } = result;
-
-    useEffect(() => {
-
-      if (error) {
-        dispatch(actions.metricsErrorRecieved({ error: error.message }));
-        return;
-      }
-
-      if (!data) return;
-
-      const { getMetrics } = data;
-
-      // console.log(getMetrics, "This is metricsData")
-    
-      dispatch(actions.metricsReceived(getMetrics));
-    }, [dispatch, data, error]);
-  
-    if (fetching) return <LinearProgress />;
-  
-    return <Paper>
+  if (fetching) return <LinearProgress />;
+  // Need to change this to a select and add a delete function
+  return (
+    <Paper>
       TEST
-      {metrics.map((singleMetric) => {
+      {metrics.map(singleMetric => {
         return (
-          <Chip key={singleMetric} label={singleMetric} onClick={() => {
-            handleMetricClick(singleMetric)
-          }} />
-        )
+          <Chip
+            key={singleMetric}
+            label={singleMetric}
+            onClick={() => {
+              handleMetricClick(singleMetric);
+            }}
+          />
+        );
       })}
-        {/* {console.log(metrics, "in return test")} */}
-    </Paper> 
-  };
-
- 
+    </Paper>
+  );
+};

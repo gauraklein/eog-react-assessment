@@ -61,12 +61,16 @@ const Weather = () => {
   const { fetching, data, error } = result;
 
   useEffect(() => {
+    console.log('useEffect hook triggered')
     if (error) {
       dispatch(actions.weatherApiErrorReceived({ error: error.message }));
       return;
     }
+
     if (!data) return;
+
     const { getWeatherForLocation } = data;
+
     dispatch(actions.weatherDataRecevied(getWeatherForLocation));
   }, [dispatch, data, error]);
 
