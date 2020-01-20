@@ -119,25 +119,31 @@ export default () => {
   }, [dispatch, data, error]);
 
   if (fetching) return <LinearProgress />;
-
+  console.log(historicMetricData, 'this is the historic metric data')
   // if everything goes correctly the value gets returned
+
+  if (historicMetricData.length > 0) {
+    let MetricName = historicMetricData[0].measurements[0].value
   return (
     <div>
       <h1>hello world</h1>
-  <p>{historicMetricData.waterTemp.measurements[0].value}</p>
+  <p>{MetricName}</p>
   {/* <ResponsiveContainer width={700} height="80%"> */}
-  <LineChart width={600} height={400} data={historicMetricData.waterTemp.measurements}>
+  {/* <LineChart width={600} height={400} data={historicMetricData.waterTemp.measurements}>
     <Line type="monotone" dataKey="value" name="waterTemp" dot={false} stroke="#8884d8" />
     <CartesianGrid stroke="#ccc" />
     <XAxis dataKey="at">
     <Label value="Timestamp" offset={0} position="insideBottom" />
     </XAxis>
     <YAxis label={{ value: 'F', angle: 90, position: 'insideTopLeft' }}/>
-    < Tooltip />
+    {/* <YAxis label={{ value: 'slk', angle: 90, position: 'insideTopLeft' }}/> */}
+    {/* < Tooltip />
     <Legend verticalAlign="top" height={36}/>
-  </LineChart>
+  </LineChart> */}
   {/* </ResponsiveContainer> */}
     </div>
   );
+  }
 
+  return <h1>NO DATA</h1>
 }
