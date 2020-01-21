@@ -9,7 +9,7 @@ export type ApiErrorAction = {
 const initialState = {
   metrics: [],
   timeStamp: 0,
-  selectedMetrics: ["waterTemp"],
+  selectedMetrics: [""],
   //Since there were only six metrics I went ahead and wrote them out in initial state
   // I definitely would need to write a better solution if this project was to scale up at all
   metricMeasurementData: {
@@ -62,6 +62,10 @@ const slice = createSlice({
       //ensures there are no duplicates
       if (state.selectedMetrics.includes(action.payload)) {
         return;
+      }
+
+      if (state.selectedMetrics.includes("")) {
+        state.selectedMetrics.pop()
       }
 
       const newSelectedMetrics = [...state.selectedMetrics];

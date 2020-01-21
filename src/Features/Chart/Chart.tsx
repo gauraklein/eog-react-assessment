@@ -100,11 +100,9 @@ export default () => {
     }
   }, [dispatch, data, error]);
 
-  if (fetching) return <LinearProgress />;
-
   console.log(historicMetricData, 'this is the historic metric data')
 
-  if (historicMetricData.length > 1 && selectedMetrics.length > 0) {
+  if (historicMetricData.length > 1 && selectedMetrics.length > 0 && !selectedMetrics.includes("")) {
     const chartData = parseHistoricData(historicMetricData)
 
     const tempArray = ["waterTemp", "flareTemp", "oilTemp"]
@@ -141,11 +139,6 @@ export default () => {
   return <h1></h1>
 };
   
-const RenderLines = (selectedMetrics) => {
-
-  
-
-} 
 // This is pretty inefficient and I feel like I went down a bit of a rabbit hole with my thinking Here
 // In a working environment I would have reached out to a senior for some guidance on the best way to 
 // accomplish this

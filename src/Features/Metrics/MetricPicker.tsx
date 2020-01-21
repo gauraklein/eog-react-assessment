@@ -79,7 +79,7 @@ const MetricPicker = () => {
             key={singleMetric}
             label={singleMetric}
             onClick={() => {
-              handleMetricClick(singleMetric);
+              dispatch(actions.metricClicked(singleMetric));
             }}
           />
         );

@@ -45,6 +45,13 @@ export default () => {
 const RenderSelectedMetrics = () => {
   //grabs user chosen Metrics
   const { selectedMetrics } = useSelector(getSelectedMetrics);
+
+  if (selectedMetrics.includes("")) {
+    return (
+      <h1></h1>
+    )
+  }
+  if (selectedMetrics.length > 0) {
   //Takes each metric and renders it onto a Paper Component
   return (
     <div>
@@ -59,6 +66,12 @@ const RenderSelectedMetrics = () => {
       })}
     </div>
   );
+}
+return (
+  <div>
+
+  </div>
+)
 };
 
 //queries the backend then renders current value
