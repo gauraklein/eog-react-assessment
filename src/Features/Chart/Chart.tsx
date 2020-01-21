@@ -64,7 +64,7 @@ export default () => {
   const dispatch = useDispatch();
   //makes selected metrics and measurements available in component
   const { historicMetricData, selectedMetrics, timeStamp } = useSelector(getSelectedMetrics);
-  console.log(timeStamp, 'this is the timestamp')
+
   
   const queryVariable = (timeStamp - 1800000)
   
@@ -77,7 +77,7 @@ export default () => {
     requestPolicy: 'cache-and-network',
   });
 
-//   console.log(result, 'this is the result')
+
   // status of graphql query -- this is my first time working with graphql and being able to destructure
   // the result like this is awesome!
   const { fetching, data, error } = result;
@@ -90,7 +90,7 @@ export default () => {
 
     if (!data) return;
 
-    console.log(data, 'this is data')
+
 
     const { getMultipleMeasurements } = data;
 
@@ -100,9 +100,9 @@ export default () => {
     }
   }, [dispatch, data, error]);
 
-  console.log(historicMetricData, 'this is the historic metric data')
 
-  if (historicMetricData.length > 1 && selectedMetrics.length > 0 && !selectedMetrics.includes("")) {
+
+  if (historicMetricData.length > 1 && selectedMetrics.length > 0) {
     const chartData = parseHistoricData(historicMetricData)
 
     const tempArray = ["waterTemp", "flareTemp", "oilTemp"]
