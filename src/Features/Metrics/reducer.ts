@@ -9,7 +9,7 @@ export type ApiErrorAction = {
 const initialState = {
   metrics: [],
   timeStamp: 0,
-  selectedMetrics: ["waterTemp"],
+  selectedMetrics: [] as any[],
   //Since there were only six metrics I went ahead and wrote them out in initial state
   // I definitely would need to write a better solution if this project was to scale up at all
   metricMeasurementData: {
@@ -55,6 +55,19 @@ const slice = createSlice({
       state.metrics = action.payload.getMetrics;
       state.timeStamp = action.payload.heartBeat
     },
+    metricDelete: (state, action) => {
+      
+      const newMetrics: any = [...state.metrics]
+
+      newMetrics.push(action.payload)
+
+      state.metrics = newMetrics
+      
+      state.selectedMetrics = state.selectedMetrics.filter((value) => {
+        return value !== action.payload
+      })
+
+    },
     //error handling
     metricsErrorRecieved: (state, action: PayloadAction<ApiErrorAction>) => state,
     //adds a clicked metric to selected metrics array
@@ -64,11 +77,19 @@ const slice = createSlice({
         return;
       }
 
+      if (state.selectedMetrics.includes("")) {
+        state.selectedMetrics.pop()
+      }
+
       const newSelectedMetrics = [...state.selectedMetrics];
 
       newSelectedMetrics.push(action.payload);
 
       state.selectedMetrics = newSelectedMetrics;
+
+      state.metrics = state.metrics.filter((value) => {
+        return value !== action.payload
+      })
     },
     //displays current values
     displayCurrentMetricData: (state, action) => {

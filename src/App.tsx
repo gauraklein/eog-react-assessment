@@ -36,7 +36,6 @@ const App = () => (
         <Header />
         <Metrics />
         <Chart />
-        <NowWhat />
         <ToastContainer />
       </Wrapper>
     </Provider>

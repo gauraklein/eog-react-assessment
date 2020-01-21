@@ -2,9 +2,27 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from './reducer';
 import { Provider, createClient, useQuery } from 'urql';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Paper from '@material-ui/core/Paper';
 import { IState } from '../../store';
+
+const useStyles = makeStyles((theme: Theme) =>
+createStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: '100%'
+  },
+  paper: {
+    width: 175,
+    textAlign: "center",
+    margin: 10,
+    marginRight: -2
+  }
+}),
+);
 
 //For Graphql
 const client = createClient({
@@ -44,13 +62,18 @@ export default () => {
 //renders metrics and values -- Parent Component
 const RenderSelectedMetrics = () => {
   //grabs user chosen Metrics
+  const classes = useStyles();
+
   const { selectedMetrics } = useSelector(getSelectedMetrics);
+
+
+  if (selectedMetrics.length > 0) {
   //Takes each metric and renders it onto a Paper Component
   return (
-    <div>
+    <div className={classes.container}>
       {selectedMetrics.map(singleMetric => {
         return (
-          <Paper key={singleMetric}>
+          <Paper className={classes.paper} key={singleMetric}>
             <h2>{singleMetric}</h2>
             {/* renders current data based on graphql query */}
             <CurrentMetricData metricNameObject={singleMetric} />
@@ -59,10 +82,19 @@ const RenderSelectedMetrics = () => {
       })}
     </div>
   );
+}
+return (
+  <div>
+
+  </div>
+)
 };
 
 //queries the backend then renders current value
 const CurrentMetricData = metricNameObject => {
+
+  const classes = useStyles();
+
   //a quick work around for metricNameObject being passed down as an object as opposed to a string
   const metricName = metricNameObject.metricNameObject;
   //Redux

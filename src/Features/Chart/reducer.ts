@@ -25,15 +25,15 @@ const slice = createSlice({
     ChartErrorRecieved: (state, action: PayloadAction<ApiErrorAction>) => state,
 
     historicalDataRecieved: (state, action) => {
-      console.log('hitReducer');
-      console.log(action.payload, 'this is the action.payload')
+
+
 
       const nextState = {
         ...state
       }
 
       nextState.historicMetricData = action.payload
-      console.log(nextState, 'this is the nextState')
+
       return nextState
  
     },
