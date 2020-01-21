@@ -4,42 +4,29 @@ export type ApiErrorAction = {
   error: string;
 };
 
-// export type HistoricMetricData = {
-//   historicMetricData: Array<any>
-// }
-
 const initialState = {
-  historicMetricData: [
-    {
-      
-    }
-  ]
-    
+  historicMetricData: [{}],
 };
 
 const slice = createSlice({
   name: 'historicData',
-  initialState,    
+  initialState,
   reducers: {
     //error handling
     ChartErrorRecieved: (state, action: PayloadAction<ApiErrorAction>) => state,
 
+    //gets 30 minutes of historical data for all metrics
     historicalDataRecieved: (state, action) => {
-
-
-
       const nextState = {
-        ...state
-      }
+        ...state,
+      };
 
-      nextState.historicMetricData = action.payload
+      nextState.historicMetricData = action.payload;
 
-      return nextState
- 
+      return nextState;
     },
   },
 });
-
 
 export const reducer = slice.reducer;
 export const actions = slice.actions;

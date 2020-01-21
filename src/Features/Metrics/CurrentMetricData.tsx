@@ -1,45 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from './reducer';
-import { Provider, createClient, useQuery } from 'urql';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { Provider, useQuery } from 'urql';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Paper from '@material-ui/core/Paper';
+import { client, currentMetricQuery as query } from '../../Modules/graphqlModules';
+import { useStylesCurrentMetric as useStyles } from '../../Modules/materialuiModules';
 import { IState } from '../../store';
-
-const useStyles = makeStyles((theme: Theme) =>
-createStyles({
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    width: '100%'
-  },
-  paper: {
-    width: 175,
-    textAlign: "center",
-    margin: 10,
-    marginRight: -2
-  }
-}),
-);
-
-//For Graphql
-const client = createClient({
-  url: 'https://react.eogresources.com/graphql',
-});
-
-//gives a metric object with current values
-const query = `
-  query($metricName: String! ) {
-    getLastKnownMeasurement(metricName: $metricName) {
-      metric
-      at
-      value
-      unit
-    }
-  }
-  `;
 
 //pulls from redux store
 const getSelectedMetrics = (state: IState) => {
@@ -61,46 +28,43 @@ export default () => {
 
 //renders metrics and values -- Parent Component
 const RenderSelectedMetrics = () => {
-  //grabs user chosen Metrics
+  //Material
   const classes = useStyles();
-
+  //selector
   const { selectedMetrics } = useSelector(getSelectedMetrics);
 
-
+  //checks to make sure something has been selected
   if (selectedMetrics.length > 0) {
-  //Takes each metric and renders it onto a Paper Component
-  return (
-    <div className={classes.container}>
-      {selectedMetrics.map(singleMetric => {
-        return (
-          <Paper className={classes.paper} key={singleMetric}>
-            <h2>{singleMetric}</h2>
-            {/* renders current data based on graphql query */}
-            <CurrentMetricData metricNameObject={singleMetric} />
-          </Paper>
-        );
-      })}
-    </div>
-  );
-}
-return (
-  <div>
+    //Takes each metric and renders it onto a Paper Component
+    return (
+      <div className={classes.container}>
+        {selectedMetrics.map(singleMetric => {
+          return (
+            <Paper className={classes.paper} key={singleMetric}>
+              <h2>{singleMetric}</h2>
+              <CurrentMetricData metricNameObject={singleMetric} />
+            </Paper>
+          );
+        })}
+      </div>
+    );
+  }
 
-  </div>
-)
+  return null;
 };
 
 //queries the backend then renders current value
 const CurrentMetricData = metricNameObject => {
-
-  const classes = useStyles();
-
-  //a quick work around for metricNameObject being passed down as an object as opposed to a string
+  //a quick work around for metricNameObject
+  //being passed down as an object as opposed to a string
   const metricName = metricNameObject.metricNameObject;
+
   //Redux
   const dispatch = useDispatch();
+
   //makes selected metrics and measurements available in component
   const { metricMeasurementData } = useSelector(getSelectedMetrics);
+
   //db query: polling at the moment but given more time I would dig into subscribing
   const [result] = useQuery({
     query,
@@ -114,6 +78,7 @@ const CurrentMetricData = metricNameObject => {
   // status of graphql query -- this is my first time working with graphql and being able to destructure
   // the result like this is awesome!
   const { fetching, data, error } = result;
+
   //Hook
   useEffect(() => {
     if (error) {
@@ -127,7 +92,6 @@ const CurrentMetricData = metricNameObject => {
     // In retrospect this seems pretty inefficient If I was able to refactor
     // I would probably use getMultipleMeasurements and use that result for current
     // and historical values
-
     const { getLastKnownMeasurement } = data;
 
     //the dispatch
