@@ -15,13 +15,11 @@ createStyles({
     flexWrap: 'wrap',
     width: '100%'
   },
-  flex1: {
-    flex: 1,
-  },
   paper: {
-    width: 200,
+    width: 175,
     textAlign: "center",
-    margin: 10
+    margin: 10,
+    marginRight: -2
   }
 }),
 );

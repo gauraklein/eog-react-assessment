@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStyles, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import MetricPicker from '../Features/Metrics/MetricPicker';
 import CurrentMetricData from '../Features/Metrics/CurrentMetricData';
 
