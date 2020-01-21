@@ -22,7 +22,7 @@ query($latLong: WeatherQuery!) {
 `;
 
 const getWeather = (state: IState) => {
-  console.log(state, 'this is the state')
+  // console.log(state, 'this is the state')
   const { temperatureinFahrenheit, description, locationName } = state.weather;
   return {
     temperatureinFahrenheit,
@@ -61,7 +61,7 @@ const Weather = () => {
   const { fetching, data, error } = result;
 
   useEffect(() => {
-    console.log('useEffect hook triggered')
+
     if (error) {
       dispatch(actions.weatherApiErrorReceived({ error: error.message }));
       return;

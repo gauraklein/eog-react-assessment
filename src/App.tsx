@@ -9,6 +9,8 @@ import Header from './components/Header';
 import Wrapper from './components/Wrapper';
 import NowWhat from './components/NowWhat';
 import Metrics from './components/Metrics';
+import Chart from './Features/Chart/Chart';
+
 
 
 const store = createStore();
@@ -33,6 +35,7 @@ const App = () => (
       <Wrapper>
         <Header />
         <Metrics />
+        <Chart />
         <NowWhat />
         <ToastContainer />
       </Wrapper>
