@@ -46,7 +46,6 @@ const client = createClient({
     const { historicMetricData } = state.historicData
     return {
       selectedMetrics,
-      metricMeasurementData,
       historicMetricData, 
       timeStamp
     };
@@ -66,35 +65,11 @@ export default () => {
   //Redux
   const dispatch = useDispatch();
   //makes selected metrics and measurements available in component
-  const { historicMetricData, metricMeasurementData, timeStamp } = useSelector(getSelectedMetrics);
+  const { historicMetricData, selectedMetrics, timeStamp } = useSelector(getSelectedMetrics);
   console.log(timeStamp, 'this is the timestamp')
   
   const queryVariable = (timeStamp - 1800000)
   
-
-// const buildQueryVariable = (metricMeasurementData) => {
-  
-//   if (!metricMeasurementData.waterTemp) {
-//     console.log('returning')
-//     return [
-//       {metricName: "waterTemp", after: 1579564675591}
-//     ]
-//   }
-  
-//   let queryVariableToReturn = [
-//     { metricName: "waterTemp", after: metricMeasurementData.waterTemp.at - 1800000},
-//     { metricName: "casingPressure", after: metricMeasurementData.waterTemp.at - 1800000},
-//     { metricName: "injValveOpen", after: metricMeasurementData.waterTemp.at - 1800000},
-//     { metricName: "flareTemp", after: metricMeasurementData.waterTemp.at - 1800000},
-//     { metricName: "oilTemp", after: metricMeasurementData.waterTemp.at - 1800000},
-//     { metricName: "tubingPressure", after: metricMeasurementData.waterTemp.at - 1800000}
-//   ]
-  
-//   return queryVariableToReturn
-  
-// }
-// const queryVariable = buildQueryVariable
-//db query: polling at the moment but given more time I would dig into subscribing
   const [result] = useQuery({
     query,
     variables: {
@@ -131,39 +106,48 @@ export default () => {
 
   console.log(historicMetricData, 'this is the historic metric data')
 
-  if (historicMetricData.length > 1) {
+  if (historicMetricData.length > 1 && selectedMetrics.length > 0) {
     const chartData = parseHistoricData(historicMetricData)
+
+    const tempArray = ["waterTemp", "flareTemp", "oilTemp"]
+    const pressureArray = ["tubingPressure", "casingPressure"]
 
   return (
     <div>
     
-  
-  <LineChart width={600} height={400} data={chartData}>
-    <Line type="monotone" dataKey="waterTempValue" yAxisId={0} name="waterTemp" dot={false} stroke="#47E3FF" strokeWidth={2}/>
-    <Line type="monotone" dataKey="casingPressureValue" yAxisId={1} name="casingPressure" dot={false} stroke="#90FF82" strokeWidth={2}/>
-    <Line type="monotone" dataKey="injValveOpenValue" yAxisId={2} name="injValveOpen" dot={false} stroke="#FFE344" strokeWidth={2}/>
-    <Line type="monotone" dataKey="flareTempValue" yAxisId={0} name="flareTemp" dot={false} stroke="#FF7070" strokeWidth={2}/>
-    <Line type="monotone" dataKey="oilTempValue" yAxisId={0} name="oilTemp" dot={false} stroke="#AB00C1" strokeWidth={2}/>
-    <Line type="monotone" dataKey="tubingPressureValue" yAxisId={1} name="tubingPressureTemp" dot={false} stroke="#FF3030" strokeWidth={2}/>
+
+  <LineChart width={800} height={600} data={chartData}>
     <CartesianGrid stroke="#ccc" />
     <XAxis dataKey="timestamp">
     <Label value="Timestamp" offset={0} position="insideBottom" />
     </XAxis>
-    <YAxis type="number" yAxisId={0} label={{ value: 'F', angle: 90, position: 'insideTopLeft' }}/>
-    <YAxis type="number" yAxisId={1}  label={{ value: 'PSI', angle: 90, position: 'insideTopLeft' }}/>
-    <YAxis type="number" yAxisId={2}  label={{ value: '%', angle: 90, position: 'insideTopLeft' }}/>
     < Tooltip />
     <Legend verticalAlign="top" height={36}/>
+    //Lines to render
+    { selectedMetrics.includes("waterTemp") ? <Line type="monotone" dataKey="waterTempValue" yAxisId={0} name="waterTemp" dot={false} stroke="#47E3FF" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("casingPressure") ? <Line type="monotone" dataKey="casingPressureValue" yAxisId={1} name="casingPressure" dot={false} stroke="#90FF82" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("injValveOpen") ? <Line type="monotone" dataKey="injValveOpenValue" yAxisId={2} name="injValveOpen" dot={false} stroke="#FFE344" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("flareTemp") ? <Line type="monotone" dataKey="flareTempValue" yAxisId={0} name="flareTemp" dot={false} stroke="#FF7070" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("oilTemp") ? <Line type="monotone" dataKey="oilTempValue" yAxisId={0} name="oilTemp" dot={false} stroke="#AB00C1" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("tubingPressure") ? <Line type="monotone" dataKey="tubingPressureValue" yAxisId={1} name="tubingPressureTemp" dot={false} stroke="#FF3030" strokeWidth={2}/> : ''}
+    //YAxes to render
+    { tempArray.some(metric => selectedMetrics.includes(metric)) ? <YAxis type="number" yAxisId={0} label={{ value: 'F', angle: 90, position: 'insideTopLeft' }}/> : ''}
+    { pressureArray.some(metric => selectedMetrics.includes(metric)) ? <YAxis type="number" yAxisId={1}  label={{ value: 'PSI', angle: 90, position: 'insideTopLeft' }}/> : ''}
+    { selectedMetrics.includes("injValveOpen") ? <YAxis type="number" yAxisId={2}  label={{ value: '%', angle: 90, position: 'insideTopLeft' }}/> : ''}
   </LineChart> 
-  {/* </ResponsiveContainer> */}
+
     </div>
   )
 }
 
-  return <h1>NO DATA</h1>
+  return <h1></h1>
 };
   
+const RenderLines = (selectedMetrics) => {
 
+  
+
+} 
 // This is pretty inefficient and I feel like I went down a bit of a rabbit hole with my thinking Here
 // In a working environment I would have reached out to a senior for some guidance on the best way to 
 // accomplish this
