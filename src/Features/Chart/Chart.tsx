@@ -4,9 +4,7 @@ import { actions } from './reducer';
 import { Provider, createClient, useQuery } from 'urql';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, Label, Tooltip} from 'recharts';
-// import Paper from '@material-ui/core/Paper';
 import { IState } from '../../store';
-// import { Tooltip } from '@material-ui/core';
 
 const client = createClient({
     url: 'https://react.eogresources.com/graphql',
@@ -124,12 +122,12 @@ export default () => {
     < Tooltip />
     <Legend verticalAlign="top" height={36}/>
     //Lines to render
-    { selectedMetrics.includes("waterTemp") ? <Line type="monotone" dataKey="waterTempValue" yAxisId={0} name="waterTemp" dot={false} stroke="#47E3FF" strokeWidth={2}/> : ''}
-    { selectedMetrics.includes("casingPressure") ? <Line type="monotone" dataKey="casingPressureValue" yAxisId={1} name="casingPressure" dot={false} stroke="#90FF82" strokeWidth={2}/> : ''}
-    { selectedMetrics.includes("injValveOpen") ? <Line type="monotone" dataKey="injValveOpenValue" yAxisId={2} name="injValveOpen" dot={false} stroke="#FFE344" strokeWidth={2}/> : ''}
-    { selectedMetrics.includes("flareTemp") ? <Line type="monotone" dataKey="flareTempValue" yAxisId={0} name="flareTemp" dot={false} stroke="#FF7070" strokeWidth={2}/> : ''}
-    { selectedMetrics.includes("oilTemp") ? <Line type="monotone" dataKey="oilTempValue" yAxisId={0} name="oilTemp" dot={false} stroke="#AB00C1" strokeWidth={2}/> : ''}
-    { selectedMetrics.includes("tubingPressure") ? <Line type="monotone" dataKey="tubingPressureValue" yAxisId={1} name="tubingPressureTemp" dot={false} stroke="#FF3030" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("waterTemp") ? <Line type="monotone" dataKey="waterTempValue" isAnimationActive={false} yAxisId={0} name="waterTemp" dot={false} stroke="#47E3FF" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("casingPressure") ? <Line type="monotone" dataKey="casingPressureValue" isAnimationActive={false} yAxisId={1} name="casingPressure" dot={false} stroke="#90FF82" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("injValveOpen") ? <Line type="monotone" dataKey="injValveOpenValue" isAnimationActive={false} yAxisId={2} name="injValveOpen" dot={false} stroke="#FFE344" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("flareTemp") ? <Line type="monotone" dataKey="flareTempValue" isAnimationActive={false} yAxisId={0} name="flareTemp" dot={false} stroke="#FF7070" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("oilTemp") ? <Line type="monotone" dataKey="oilTempValue" isAnimationActive={false} yAxisId={0} name="oilTemp" dot={false} stroke="#AB00C1" strokeWidth={2}/> : ''}
+    { selectedMetrics.includes("tubingPressure") ? <Line type="monotone" dataKey="tubingPressureValue" isAnimationActive={false} yAxisId={1} name="tubingPressureTemp" dot={false} stroke="#FF3030" strokeWidth={2}/> : ''}
     //YAxes to render
     { tempArray.some(metric => selectedMetrics.includes(metric)) ? <YAxis type="number" yAxisId={0} label={{ value: 'F', angle: 90, position: 'insideTopLeft' }}/> : ''}
     { pressureArray.some(metric => selectedMetrics.includes(metric)) ? <YAxis type="number" yAxisId={1}  label={{ value: 'PSI', angle: 90, position: 'insideTopLeft' }}/> : ''}
