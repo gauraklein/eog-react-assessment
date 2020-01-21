@@ -8,6 +8,7 @@ export type ApiErrorAction = {
 
 const initialState = {
   metrics: [],
+  timeStamp: 0,
   selectedMetrics: ["waterTemp"],
   //Since there were only six metrics I went ahead and wrote them out in initial state
   // I definitely would need to write a better solution if this project was to scale up at all
@@ -51,7 +52,8 @@ const slice = createSlice({
   reducers: {
     //adds metrics from db query to redux store
     metricsReceived: (state, action) => {
-      state.metrics = action.payload;
+      state.metrics = action.payload.getMetrics;
+      state.timeStamp = action.payload.heartBeat
     },
     //error handling
     metricsErrorRecieved: (state, action: PayloadAction<ApiErrorAction>) => state,
@@ -79,7 +81,7 @@ const slice = createSlice({
         value: action.payload.value,
         unit: action.payload.unit,
       };
-
+      
       state.metricMeasurementData[metricName] = newMeasurementData;
     },
   },

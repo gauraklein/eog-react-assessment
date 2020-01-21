@@ -14,15 +14,15 @@ const client = createClient({
   
   //gives a metric object with current values
   const query = `
-    query {
+    query($queryVariable: Timestamp) {
         getMultipleMeasurements(
             input: [
-                { metricName: "waterTemp", after: 1579556215250, before: 1579558015250},
-                { metricName: "casingPressure", after: 1579556215250, before: 1579558015250},
-                { metricName: "injValveOpen", after: 1579556215250, before: 1579558015250},
-                { metricName: "flareTemp", after: 1579556215250, before: 1579558015250},
-                { metricName: "oilTemp", after: 1579556215250, before: 1579558015250},
-                { metricName: "tubingPressure", after: 1579556215250, before: 1579558015250}
+              { metricName: "waterTemp", after: $queryVariable},
+              { metricName: "casingPressure", after: $queryVariable},
+              { metricName: "injValveOpen", after: $queryVariable},
+              { metricName: "flareTemp", after: $queryVariable},
+              { metricName: "oilTemp", after: $queryVariable},
+              { metricName: "tubingPressure", after: $queryVariable}
             ]
         ) {
           metric
@@ -34,15 +34,21 @@ const client = createClient({
         }
       }
     `;
+
+    // const heartBeatQuery = `
+    // query {
+    //   heartBeat
+    // }`
   
   //pulls from redux store
   const getSelectedMetrics = (state: IState) => {
-    const { selectedMetrics, metricMeasurementData } = state.metrics;
+    const { selectedMetrics, metricMeasurementData, timeStamp } = state.metrics;
     const { historicMetricData } = state.historicData
     return {
       selectedMetrics,
       metricMeasurementData,
-      historicMetricData
+      historicMetricData, 
+      timeStamp
     };
   };
 
@@ -60,39 +66,42 @@ export default () => {
   //Redux
   const dispatch = useDispatch();
   //makes selected metrics and measurements available in component
-  const { historicMetricData } = useSelector(getSelectedMetrics);
+  const { historicMetricData, metricMeasurementData, timeStamp } = useSelector(getSelectedMetrics);
+  console.log(timeStamp, 'this is the timestamp')
+  
+  const queryVariable = (timeStamp - 1800000)
   
 
+// const buildQueryVariable = (metricMeasurementData) => {
   
-  //This function should build the input variable for db query
-  // const buildQueryInput = (selectedMetrics) => {
-  //     const queryInput : Array<any> = []
-  //     selectedMetrics.map((individualMetric) => {
-  //       const metricInputObject: any = {
-  //           metricName: individualMetric,
-  //           after: 1579506252649
-  //       }
-  //       queryInput.push(metricInputObject)
-  //       return queryInput
-  //     })
-  //   //   console.log(queryInput, 'this is the query input')
-  //     return queryInput
-  // }
-
-//   Instead of having the chart component refresh everytime a new measurement is recieved, I need to set the 
-//   start time then push to that item in the redux store
-
-  // const queryVariable = buildQueryInput(['waterTemp', "casingPressure"])
-//   console.log(queryVariable, 'this is the query variable')
+//   if (!metricMeasurementData.waterTemp) {
+//     console.log('returning')
+//     return [
+//       {metricName: "waterTemp", after: 1579564675591}
+//     ]
+//   }
   
-  //db query: polling at the moment but given more time I would dig into subscribing
+//   let queryVariableToReturn = [
+//     { metricName: "waterTemp", after: metricMeasurementData.waterTemp.at - 1800000},
+//     { metricName: "casingPressure", after: metricMeasurementData.waterTemp.at - 1800000},
+//     { metricName: "injValveOpen", after: metricMeasurementData.waterTemp.at - 1800000},
+//     { metricName: "flareTemp", after: metricMeasurementData.waterTemp.at - 1800000},
+//     { metricName: "oilTemp", after: metricMeasurementData.waterTemp.at - 1800000},
+//     { metricName: "tubingPressure", after: metricMeasurementData.waterTemp.at - 1800000}
+//   ]
+  
+//   return queryVariableToReturn
+  
+// }
+// const queryVariable = buildQueryVariable
+//db query: polling at the moment but given more time I would dig into subscribing
   const [result] = useQuery({
     query,
-    // variables: {
-    //   queryVariable
-    // },
-    // pollInterval: 1300,
-    // requestPolicy: 'cache-and-network',
+    variables: {
+      queryVariable
+    },
+    pollInterval: 1300,
+    requestPolicy: 'cache-and-network',
   });
 
 //   console.log(result, 'this is the result')
@@ -127,16 +136,15 @@ export default () => {
 
   return (
     <div>
-      <h1>hello world</h1>
-  <p>{}</p>
+    
   
   <LineChart width={600} height={400} data={chartData}>
-    <Line type="monotone" dataKey="waterTempValue" yAxisId={0} name="waterTemp" dot={false} stroke="#47E3FF" />
-    <Line type="monotone" dataKey="casingPressureValue" yAxisId={1} name="casingPressure" dot={false} stroke="#90FF82" />
-    <Line type="monotone" dataKey="injValveOpenValue" yAxisId={2} name="injValveOpen" dot={false} stroke="#FFE344" />
-    <Line type="monotone" dataKey="flareTempValue" yAxisId={0} name="flareTemp" dot={false} stroke="#FF7070" />
-    <Line type="monotone" dataKey="oilTempValue" yAxisId={0} name="oilTemp" dot={false} stroke="#AB00C1" />
-    <Line type="monotone" dataKey="tubingPressureValue" yAxisId={1} name="tubingPressureTemp" dot={false} stroke="#FF3030" />
+    <Line type="monotone" dataKey="waterTempValue" yAxisId={0} name="waterTemp" dot={false} stroke="#47E3FF" strokeWidth={2}/>
+    <Line type="monotone" dataKey="casingPressureValue" yAxisId={1} name="casingPressure" dot={false} stroke="#90FF82" strokeWidth={2}/>
+    <Line type="monotone" dataKey="injValveOpenValue" yAxisId={2} name="injValveOpen" dot={false} stroke="#FFE344" strokeWidth={2}/>
+    <Line type="monotone" dataKey="flareTempValue" yAxisId={0} name="flareTemp" dot={false} stroke="#FF7070" strokeWidth={2}/>
+    <Line type="monotone" dataKey="oilTempValue" yAxisId={0} name="oilTemp" dot={false} stroke="#AB00C1" strokeWidth={2}/>
+    <Line type="monotone" dataKey="tubingPressureValue" yAxisId={1} name="tubingPressureTemp" dot={false} stroke="#FF3030" strokeWidth={2}/>
     <CartesianGrid stroke="#ccc" />
     <XAxis dataKey="timestamp">
     <Label value="Timestamp" offset={0} position="insideBottom" />
@@ -186,7 +194,7 @@ const  parseHistoricData = (historicMetricData) => {
     
     historicDataForRecharts.push(allValuesForTimestamp)
 
-  
+    return null
    
   })
 

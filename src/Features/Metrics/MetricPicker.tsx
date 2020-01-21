@@ -14,6 +14,7 @@ const client = createClient({
 const query = `
   query {
     getMetrics 
+    heartBeat
   }
   `;
 //pulls from redux store
@@ -48,6 +49,8 @@ const MetricPicker = () => {
   const [result] = useQuery({
     query,
   });
+
+  console.log(result, 'this is the result')
   // status of graphql query -- this is my first time working with graphql and being able to destructure
   // the result like this is awesome!
   const { fetching, data, error } = result;
@@ -62,7 +65,7 @@ const MetricPicker = () => {
     //from result
     const { getMetrics } = data;
     //dispatch
-    dispatch(actions.metricsReceived(getMetrics));
+    dispatch(actions.metricsReceived(data));
   }, [dispatch, data, error]);
 
   if (fetching) return <LinearProgress />;
