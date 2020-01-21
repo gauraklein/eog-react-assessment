@@ -4,7 +4,9 @@ export type ApiErrorAction = {
   error: string;
 };
 
-// TODO figure out how to set type for selected Metrics
+//Please excuse this reducer, I swear I usually don't write code like this :)
+//If I were given the opportunity to work further on this feature, the first
+//thing I would do is refactor this.
 
 const initialState = {
   metrics: [],
@@ -53,20 +55,16 @@ const slice = createSlice({
     //adds metrics from db query to redux store
     metricsReceived: (state, action) => {
       state.metrics = action.payload.getMetrics;
-      state.timeStamp = action.payload.heartBeat
+      state.timeStamp = action.payload.heartBeat;
     },
+    //deletes metrics from selectedMetrics and adds to metrics
     metricDelete: (state, action) => {
-      
-      const newMetrics: any = [...state.metrics]
-
-      newMetrics.push(action.payload)
-
-      state.metrics = newMetrics
-      
-      state.selectedMetrics = state.selectedMetrics.filter((value) => {
-        return value !== action.payload
-      })
-
+      const newMetrics: any = [...state.metrics];
+      newMetrics.push(action.payload);
+      state.metrics = newMetrics;
+      state.selectedMetrics = state.selectedMetrics.filter(value => {
+        return value !== action.payload;
+      });
     },
     //error handling
     metricsErrorRecieved: (state, action: PayloadAction<ApiErrorAction>) => state,
@@ -76,20 +74,12 @@ const slice = createSlice({
       if (state.selectedMetrics.includes(action.payload)) {
         return;
       }
-
-      if (state.selectedMetrics.includes("")) {
-        state.selectedMetrics.pop()
-      }
-
       const newSelectedMetrics = [...state.selectedMetrics];
-
       newSelectedMetrics.push(action.payload);
-
       state.selectedMetrics = newSelectedMetrics;
-
-      state.metrics = state.metrics.filter((value) => {
-        return value !== action.payload
-      })
+      state.metrics = state.metrics.filter(value => {
+        return value !== action.payload;
+      });
     },
     //displays current values
     displayCurrentMetricData: (state, action) => {
@@ -102,7 +92,6 @@ const slice = createSlice({
         value: action.payload.value,
         unit: action.payload.unit,
       };
-      
       state.metricMeasurementData[metricName] = newMeasurementData;
     },
   },
